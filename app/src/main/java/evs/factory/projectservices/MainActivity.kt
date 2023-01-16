@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import evs.factory.projectservices.databinding.ActivityMainBinding
 import java.util.*
 
@@ -20,10 +21,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.button.setOnClickListener{
+            stopService(TestForegroundService.newIntent(this))
             startService(MyService.newIntent(this, 10))
         }
+//        binding.button2.setOnClickListener{
+//            showNotification()
+//        }
+
         binding.button2.setOnClickListener{
-            showNotification()
+            ContextCompat.startForegroundService(this,
+                TestForegroundService.newIntent(this))
         }
     }
 //Любое уведомление должно быть создано в канале

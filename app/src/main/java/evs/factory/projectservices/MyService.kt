@@ -5,10 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MyService:Service() {
 
@@ -24,7 +21,7 @@ class MyService:Service() {
         val start = intent?.getIntExtra(START_POINT, 0)?:0
         coroutineScope.launch {
             for(i in start until start + 100){
-                Thread.sleep(1000)
+                delay(1000)
                 log("Timer $i")
             }
         }
