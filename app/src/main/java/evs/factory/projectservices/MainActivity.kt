@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.startForegroundService(this,
                 TestForegroundService.newIntent(this))
         }
+
+        binding.button3.setOnClickListener{
+            ContextCompat.startForegroundService(this,
+            TestIntentService.newIntent(this))
+        }
     }
 //Любое уведомление должно быть создано в канале
     private fun showNotification(){

@@ -1,5 +1,6 @@
 package evs.factory.projectservices
 
+import android.app.IntentService
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,45 +13,33 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.*
 
-class TestIntentService:Service() {
-
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+class TestIntentService:IntentService(INTENT_NAME) {
 
     override fun onCreate() {
         super.onCreate()
         log("onCreate")
+        //Сохраняет интернт сервис при перезапуске
+        setIntentRedelivery(true)
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
 
     }
-    //С версии API 26 действия в фоне должгы вызывать уведомлпения
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        log("OnStartCommandForeground")
-        coroutineScope.launch {
-            for(i in 0 until 100){
-                delay(1000)
-                log("Timer $i")
-            }
-            stopSelf()
+
+    override fun onHandleIntent(p0: Intent?) {
+        log("onHandleIntent")
+        for(i in 0 until 5){
+            Thread.sleep(1000)
+            log("Timer $i")
         }
-        //Возвращаемое значение определяет как ведет себя сервис при перезапуске
-        //START_STICKY
-        //START_NOT_STICKY
-        //Выбранное значение перезапустит сервис с параметрами интента
-        return START_STICKY
     }
+    //С версии API 26 действия в фоне должгы вызывать уведомлпения
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel()
         log("OnDestroy")
     }
-    override fun onBind(p0: Intent?): IBinder? {
-        TODO("Not yet implemented")
-    }
-
     private fun log(message: String){
-        Log.d("SERVICE_TAG","ForegroundService:$message")
+        Log.d("SERVICE_TAG","TestIntentService:$message")
     }
 
     private fun createNotificationChannel(){
@@ -77,7 +66,7 @@ class TestIntentService:Service() {
         private const val CHANNEL_ID ="channel_id"
         private const val CHANNEL_NAME ="channel_name"
         private const val NOTIFICATION_ID = 1
-        private const val START_POINT = "start"
+        private const val INTENT_NAME = "PAVEL_GO"
         fun newIntent(context: Context):Intent{
             return Intent(context, TestIntentService::class.java)
         }
