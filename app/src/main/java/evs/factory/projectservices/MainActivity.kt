@@ -3,6 +3,9 @@ package evs.factory.projectservices
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -36,6 +39,18 @@ class MainActivity : AppCompatActivity() {
         binding.button3.setOnClickListener{
             ContextCompat.startForegroundService(this,
             TestIntentService.newIntent(this))
+        }
+
+        binding.button4.setOnClickListener{
+            val componentName = ComponentName(this, TestJobService::class.java)
+            val jobInfo = JobInfo.Builder(TestJobService.JOB_ID, componentName)
+                .setRequiresCharging(true)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPersisted(true)
+                //.setPeriodic()
+                .build()
+            val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+            jobScheduler.schedule(jobInfo)
         }
     }
 //Любое уведомление должно быть создано в канале
