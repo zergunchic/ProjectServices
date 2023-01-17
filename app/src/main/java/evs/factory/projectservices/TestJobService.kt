@@ -4,6 +4,7 @@ import android.app.job.JobParameters
 import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
+import android.os.PersistableBundle
 import android.util.Log
 import kotlinx.coroutines.*
 
@@ -25,13 +26,32 @@ class TestJobService:JobService() {
     override fun onStartJob(params: JobParameters?): Boolean {
         log("OnStartCommand")
         coroutineScope.launch {
-            for(i in 0 until 100){
-                delay(1000)
-                log("Timer $i")
+            var workItem = params?.dequeueWork()
+            while(workItem != null){
+                val page = workItem.intent.getIntExtra(PAGE,0)
+
+                    for(i in 0 until 5){
+                        delay(1000)
+                        log("Timer $i $page")
+                    }
+                    params?.completeWork(workItem)
+                    workItem = params?.dequeueWork()
             }
-            //как в методе онСтопДжоб
-            jobFinished(params, true)
+            jobFinished(params, false)
         }
+
+
+//        coroutineScope.launch {
+//            for(page in 0 until  10){
+//                for(i in 0 until 5){
+//                    delay(1000)
+//                    log("Timer $i $page")
+//                }
+//            }
+//
+//            //как в методе онСтопДжоб
+//            jobFinished(params, true)
+//        }
         //Возвращаемое значение обозначает режим работы тру если работа будет продолжаться, фолс если работа закончена
         return true
     }
@@ -48,8 +68,17 @@ class TestJobService:JobService() {
 
     companion object {
         const val JOB_ID = 3
-        fun newIntent(context: Context, start:Int):Intent{
-            return Intent(context, TestJobService::class.java)
+        private const val PAGE = "page"
+
+        fun newBundle(page: Int): PersistableBundle{
+            return PersistableBundle().apply {
+                putInt(PAGE,page)
+            }
+        }
+        fun newIntent(page:Int):Intent{
+            return Intent().apply {
+                putExtra(PAGE,page)
+            }
         }
     }
 }

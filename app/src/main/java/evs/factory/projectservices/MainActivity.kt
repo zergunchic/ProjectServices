@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
+import android.app.job.JobWorkItem
 import android.content.ComponentName
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,7 @@ import evs.factory.projectservices.databinding.ActivityMainBinding
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
+    private var page = 0
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -44,13 +45,18 @@ class MainActivity : AppCompatActivity() {
         binding.button4.setOnClickListener{
             val componentName = ComponentName(this, TestJobService::class.java)
             val jobInfo = JobInfo.Builder(TestJobService.JOB_ID, componentName)
+//                .setExtras(TestJobService.newBundle(page++))
                 .setRequiresCharging(true)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setPersisted(true)
+                //.setPersisted(true)
                 //.setPeriodic()
                 .build()
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-            jobScheduler.schedule(jobInfo)
+
+            val intent = TestJobService.newIntent(page++)
+            jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+            //переписывает существующий джоб
+            //jobScheduler.schedule(jobInfo)
         }
     }
 //Любое уведомление должно быть создано в канале
