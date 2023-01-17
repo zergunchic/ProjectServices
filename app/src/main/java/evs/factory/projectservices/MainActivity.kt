@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import evs.factory.projectservices.databinding.ActivityMainBinding
 import java.util.*
 
@@ -65,6 +67,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.button5.setOnClickListener{
             NewJobIntentService.enqueue(this,page++)
+        }
+
+        binding.button6.setOnClickListener{
+            val workManager = WorkManager.getInstance(applicationContext)
+            workManager.enqueueUniqueWork(TestWorker.WORK_NAME,
+            ExistingWorkPolicy.APPEND,
+               TestWorker.makeRequest(page++) )
         }
     }
 //Любое уведомление должно быть создано в канале
