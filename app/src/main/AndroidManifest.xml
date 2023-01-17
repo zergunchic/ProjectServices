@@ -34,6 +34,9 @@
         <service android:name=".TestIntentService"/>
         <service android:name=".TestJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".TestIntentServiceSec"></service>
+        <service android:name=".NewJobIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 
 </manifest>

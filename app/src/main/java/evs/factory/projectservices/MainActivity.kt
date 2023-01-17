@@ -53,10 +53,18 @@ class MainActivity : AppCompatActivity() {
                 .build()
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
 
-            val intent = TestJobService.newIntent(page++)
-            jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val intent = TestJobService.newIntent(page++)
+                jobScheduler.enqueue(jobInfo, JobWorkItem(intent))
+            }else{
+                startService(TestIntentServiceSec.newIntent(this, page++))
+            }
             //переписывает существующий джоб
             //jobScheduler.schedule(jobInfo)
+        }
+
+        binding.button5.setOnClickListener{
+            NewJobIntentService.enqueue(this,page++)
         }
     }
 //Любое уведомление должно быть создано в канале

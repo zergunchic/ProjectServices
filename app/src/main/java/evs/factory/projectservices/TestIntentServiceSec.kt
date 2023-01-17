@@ -20,16 +20,17 @@ class TestIntentServiceSec:IntentService(INTENT_NAME) {
         log("onCreate")
         //Сохраняет интернт сервис при перезапуске
         setIntentRedelivery(true)
-        createNotificationChannel()
-        startForeground(NOTIFICATION_ID, createNotification())
+//        createNotificationChannel()
+//        startForeground(NOTIFICATION_ID, createNotification())
 
     }
 
-    override fun onHandleIntent(p0: Intent?) {
+    override fun onHandleIntent(intent: Intent?) {
         log("onHandleIntent")
+        val page = intent?.getIntExtra(PAGE, 0)?:0
         for(i in 0 until 5){
             Thread.sleep(1000)
-            log("Timer $i")
+            log("Timer $i $page")
         }
     }
     //С версии API 26 действия в фоне должгы вызывать уведомлпения
@@ -67,8 +68,11 @@ class TestIntentServiceSec:IntentService(INTENT_NAME) {
         private const val CHANNEL_NAME ="channel_name"
         private const val NOTIFICATION_ID = 1
         private const val INTENT_NAME = "PAVEL_GO"
-        fun newIntent(context: Context):Intent{
-            return Intent(context, TestIntentServiceSec::class.java)
+        private const val PAGE = "Page"
+        fun newIntent(context: Context, page: Int):Intent{
+            return Intent(context, TestIntentServiceSec::class.java).apply {
+                putExtra(PAGE, page)
+            }
         }
     }
 }
